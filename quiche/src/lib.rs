@@ -3416,6 +3416,7 @@ impl Connection {
                 },
                 Err(Error::Done) => {
                     log::debug!("--- 8 ---");
+                    break;
                 }
 
                 Err(e) => return Err(e),
