@@ -3336,7 +3336,6 @@ impl Connection {
             return Err(Error::BufferTooShort);
         }
 
-        log::debug!("--- 0 ---");
         if self.is_closed() || self.is_draining() {
             log::debug!("--- 1 ---");
             return Err(Error::Done);
@@ -3411,7 +3410,10 @@ impl Connection {
             ) {
                 Ok(v) => v,
 
-                Err(Error::BufferTooShort) | Err(Error::Done) => break,
+                Err(Error::BufferTooShort) | Err(Error::Done) => {
+                    log::debug!("--- 6 ---");
+                    break;
+                },
 
                 Err(e) => return Err(e),
             };
