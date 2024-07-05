@@ -3410,10 +3410,13 @@ impl Connection {
             ) {
                 Ok(v) => v,
 
-                Err(Error::BufferTooShort) | Err(Error::Done) => {
+                Err(Error::BufferTooShort) => {
                     log::debug!("--- 6 ---");
                     break;
                 },
+                Err(Error::Done) => {
+                    log::debug!("--- 8 ---");
+                }
 
                 Err(e) => return Err(e),
             };
