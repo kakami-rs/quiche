@@ -4482,7 +4482,6 @@ impl Connection {
             // When we reach this point we are not able to write more, so set
             // app_limited to false.
             path.recovery.update_app_limited(false);
-            log::debug!("---> 5 <---");
             return Err(Error::Done);
         }
 
