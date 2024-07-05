@@ -3336,6 +3336,7 @@ impl Connection {
             return Err(Error::BufferTooShort);
         }
 
+        log::debug!("--- 0 ---");
         if self.is_closed() || self.is_draining() {
             log::debug!("--- 1 ---");
             return Err(Error::Done);
@@ -3346,7 +3347,6 @@ impl Connection {
         if self.local_error.is_none() {
             self.do_handshake(now)?;
         }
-        log::debug!("--- 2 ---");
 
         // Forwarding the error value here could confuse
         // applications, as they may not expect getting a `recv()`
@@ -3379,7 +3379,6 @@ impl Connection {
 
             _ => self.get_send_path_id(from, to)?,
         };
-        log::debug!("--- 4 ---");
 
         let send_path = self.paths.get_mut(send_pid)?;
 
@@ -3401,7 +3400,6 @@ impl Connection {
         if !send_path.verified_peer_address && self.is_server {
             left = cmp::min(left, send_path.max_send_bytes);
         }
-        log::debug!("--- 5 ---");
 
         // Generate coalesced packets.
         while left > 0 {
@@ -3449,6 +3447,7 @@ impl Connection {
         if done == 0 {
             self.last_tx_data = self.tx_data;
 
+            log::debug!("--- 7 ---");
             return Err(Error::Done);
         }
 
@@ -3485,6 +3484,7 @@ impl Connection {
         }
 
         if self.is_draining() {
+            log::debug!("---> 1 <---");
             return Err(Error::Done);
         }
 
@@ -3712,6 +3712,7 @@ impl Connection {
         // Make sure there is enough space for the minimum payload length.
         if left < PAYLOAD_MIN_LEN {
             path.recovery.update_app_limited(false);
+            log::debug!("---> 2 <---");
             return Err(Error::Done);
         }
 
