@@ -3337,6 +3337,7 @@ impl Connection {
         }
 
         if self.is_closed() || self.is_draining() {
+            log::debug!("--- 1 ---");
             return Err(Error::Done);
         }
 
@@ -3345,6 +3346,7 @@ impl Connection {
         if self.local_error.is_none() {
             self.do_handshake(now)?;
         }
+        log::debug!("--- 2 ---");
 
         // Forwarding the error value here could confuse
         // applications, as they may not expect getting a `recv()`
@@ -3357,6 +3359,7 @@ impl Connection {
         // There's no point in trying to send a packet if the Initial secrets
         // have not been derived yet, so return early.
         if !self.derived_initial_secrets {
+            log::debug!("--- 3 ---");
             return Err(Error::Done);
         }
 
@@ -3376,6 +3379,7 @@ impl Connection {
 
             _ => self.get_send_path_id(from, to)?,
         };
+        log::debug!("--- 4 ---");
 
         let send_path = self.paths.get_mut(send_pid)?;
 
@@ -3397,6 +3401,7 @@ impl Connection {
         if !send_path.verified_peer_address && self.is_server {
             left = cmp::min(left, send_path.max_send_bytes);
         }
+        log::debug!("--- 5 ---");
 
         // Generate coalesced packets.
         while left > 0 {
