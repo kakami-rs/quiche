@@ -3451,7 +3451,6 @@ impl Connection {
         if done == 0 {
             self.last_tx_data = self.tx_data;
 
-            log::debug!("--- 7 ---");
             return Err(Error::Done);
         }
 
