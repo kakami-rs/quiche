@@ -3411,11 +3411,9 @@ impl Connection {
                 Ok(v) => v,
 
                 Err(Error::BufferTooShort) => {
-                    log::debug!("--- 6 ---");
                     break;
                 },
                 Err(Error::Done) => {
-                    log::debug!("--- 8 ---");
                     break;
                 }
 
@@ -3629,7 +3627,15 @@ impl Connection {
         let pn_len = packet::pkt_num_len(pn, largest_acked_pkt);
 
         // The AEAD overhead at the current encryption level.
-        let crypto_overhead = pkt_space.crypto_overhead().ok_or(Error::Done)?;
+        // let crypto_overhead = pkt_space.crypto_overhead().ok_or(Error::Done)?;
+        let crypto_overhead = {
+            if let Some(p) = pkt_space.crypto_overhead() {
+                p
+            } else {
+                log::debug!("---> 3 <---");
+                return Err(Error::Done);
+            }
+        };
 
         let dcid_seq = path.active_dcid_seq.ok_or(Error::OutOfIdentifiers)?;
 
@@ -3711,6 +3717,7 @@ impl Connection {
                 // failed because cwnd is almost full. In such case app_limited
                 // is set to false here to make cwnd grow when ACK is received.
                 path.recovery.update_app_limited(false);
+                log::debug!("---> 4 <---");
                 return Err(Error::Done);
             },
         }
@@ -3853,6 +3860,7 @@ impl Connection {
                         // In such case app_limited is set to false here to make
                         // cwnd grow when ACK is received.
                         active_path.recovery.update_app_limited(false);
+                        log::debug!("--- 5 ---");
                         return Err(Error::Done);
                     },
                 }
@@ -4475,6 +4483,7 @@ impl Connection {
             // When we reach this point we are not able to write more, so set
             // app_limited to false.
             path.recovery.update_app_limited(false);
+            log::debug!("---> 5 <---");
             return Err(Error::Done);
         }
 
